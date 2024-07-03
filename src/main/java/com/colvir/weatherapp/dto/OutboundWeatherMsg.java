@@ -11,13 +11,10 @@ public class OutboundWeatherMsg {
 
     private Double avgTemperature;
 
-    private LocalDateTime dateTime;
-
-    public OutboundWeatherMsg(String city, Double currentTemperature, Double avgTemperature, LocalDateTime dateTime) {
+    public OutboundWeatherMsg(String city, Double currentTemperature, Double avgTemperature) {
         this.city = city;
         this.currentTemperature = currentTemperature;
         this.avgTemperature = avgTemperature;
-        this.dateTime = dateTime;
     }
 
     public String getCity() {
@@ -44,14 +41,6 @@ public class OutboundWeatherMsg {
         this.avgTemperature = avgTemperature;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
     @Override
     public boolean equals(Object o) {
 
@@ -59,12 +48,12 @@ public class OutboundWeatherMsg {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OutboundWeatherMsg that = (OutboundWeatherMsg) o;
-        return Objects.equals(city, that.city) && Objects.equals(currentTemperature, that.currentTemperature) && Objects.equals(avgTemperature, that.avgTemperature) && Objects.equals(dateTime, that.dateTime);
+        return Objects.equals(city, that.city) && Objects.equals(currentTemperature, that.currentTemperature) && Objects.equals(avgTemperature, that.avgTemperature);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(city, currentTemperature, avgTemperature, dateTime);
+        return Objects.hash(city, currentTemperature, avgTemperature);
     }
 
     @Override
@@ -73,7 +62,6 @@ public class OutboundWeatherMsg {
                 "city='" + city + '\'' +
                 ", currentTemperature=" + currentTemperature +
                 ", avgTemperature=" + avgTemperature +
-                ", dateTime=" + dateTime +
                 '}';
     }
 }

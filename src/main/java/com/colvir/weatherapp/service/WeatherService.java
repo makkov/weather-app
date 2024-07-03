@@ -6,7 +6,6 @@ import com.colvir.weatherapp.queue.Producer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,11 +16,13 @@ import java.util.stream.Collectors;
 public class WeatherService {
 
     private final Producer producer;
+    private final OpenWeatherClient openWeatherClient;
 
     private Map<String, Weather> weatherByCity = new HashMap<>();
 
-    public WeatherService(Producer producer) {
+    public WeatherService(Producer producer, OpenWeatherClient openWeatherClient) {
         this.producer = producer;
+        this.openWeatherClient = openWeatherClient;
     }
 
     public void addCity(String city) {
@@ -33,7 +34,18 @@ public class WeatherService {
     }
 
 
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedDelay = 10000)
+    public void updateWeather() {
+        weatherByCity.keySet().forEach(
+                city -> {
+                    Double weatherInCity = openWeatherClient.getTemperatureByCity(city);
+                    Weather weather = weatherByCity.get(city);
+                    weather.setCurrentTemperature(weatherInCity);
+                    weatherByCity.get(city).getTemperatures().add(weatherInCity);
+                });
+    }
+
+    @Scheduled(fixedDelay = 10000)
     public void sendWeather() {
         List<OutboundWeatherMsg> weatherInfos = weatherByCity.entrySet().stream()
                 .filter(entry -> entry.getValue().getCurrentTemperature() != null)
@@ -44,8 +56,7 @@ public class WeatherService {
                                 : entry.getValue().getTemperatures().stream()
                                 .mapToDouble(value -> value)
                                 .average()
-                                .getAsDouble(),
-                        LocalDateTime.now()
+                                .getAsDouble()
                 ))
                 .collect(Collectors.toList());
 
