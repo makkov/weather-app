@@ -1,0 +1,28 @@
+#https://openweathermap.org/current#name
+#https://api.openweathermap.org/data/2.5/weather?q={city name}&appid=232d85ca74118081acecb482fd0cd0f9
+openweatherkey:
+  api:
+    url:
+      pattern: https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s
+    key: mock
+
+server:
+  port: 8081
+
+spring:
+  cloud:
+    function:
+      definition: "cityConsumer"
+    stream:
+      bindings:
+        cityConsumer-in-0:
+          destination: city.out
+          group: weather_app_city_out
+      kafka:
+        binder:
+          requiredAcks: all
+        bindings:
+          cityConsumer-in-0:
+            consumer:
+              configuration:
+                "auto.offset.reset": latest
